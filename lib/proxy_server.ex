@@ -32,13 +32,17 @@ defmodule Proxir.ProxyServer do
   end
 
   defp serve(socket) do
-    socket |> read_line() |> write_line(socket)
+    message = with {:ok, data} <- read_line(socket), do: data
+    message |> write_line(socket)
     serve(socket)
   end
 
   defp read_line(socket) do
-    {:ok, data} = :gen_tcp.recv(socket, 0)
-    data
+    :gen_tcp.recv(socket, 0)
+  end
+  
+  defp write_line({:error, _}, socket) do
+    exit(:shutdown)
   end
   defp write_line(line, socket) do
     :gen_tcp.send(socket, line)
