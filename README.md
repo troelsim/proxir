@@ -1,6 +1,6 @@
 # Proxir
 
-**TODO: Add description**
+A simple TCP proxy written in elixir. It listens on a specified port, and when a client connects, it connects to a specified remote server and forwards the traffic. A simple filter pipeline allows the traffic to be modified in either direction using your own code.
 
 ## Installation
 
