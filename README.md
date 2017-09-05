@@ -4,6 +4,13 @@ A simple TCP proxy written in elixir. It listens on a specified port, and when a
 
 ## Installation
 
+Clone this git repo.
+
+```bash
+$ mix escript.build
+$ ./proxir <local_port> <remote_host> <remote_port>
+```
+
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 by adding `proxir` to your list of dependencies in `mix.exs`:
 
