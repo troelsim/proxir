@@ -4,7 +4,6 @@ defmodule Proxir.Handler do
   """
   use GenServer
   require Logger
-  @filter_module Proxir.Filter
 
   def start_link(client, opts) do
     GenServer.start_link(__MODULE__, [client, opts])
@@ -21,9 +20,10 @@ defmodule Proxir.Handler do
   end
 
   def handle_info({:tcp, socket, data}, state = %{remote: remote, client: client}) do
+    filter_module = Application.get_env(:proxir, :filter_module)
     case socket do
-      ^remote -> write_line(data |> @filter_module.filter_recv, client)
-      ^client -> write_line(data |> @filter_module.filter_send, remote)
+      ^remote -> write_line(data |> filter_module.filter_recv, client)
+      ^client -> write_line(data |> filter_module.filter_send, remote)
     end
     {:noreply, state}
   end
