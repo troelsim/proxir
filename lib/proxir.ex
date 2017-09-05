@@ -12,7 +12,6 @@ defmodule Proxir do
       :world
 
   """
-
   def main(args) do
     parse_args(args)
   end
@@ -22,8 +21,8 @@ defmodule Proxir do
       is_binary(host) and
       is_integer(remote_port)
   do
-    Application.start(:proxir, [port, host, remote_port])
-    Proxir.Application.start(Proxir.Application, [port: port, host: host, remote_port: remote_port])
+    Proxir.Application.start(:normal, [port: port, host: host, remote_port: remote_port])
+    # Wait indefinitely, otherwise process will quit immediately
     receive do
       _ -> nil
     end

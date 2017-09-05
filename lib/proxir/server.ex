@@ -4,13 +4,14 @@ defmodule Proxir.Server do
   for each new connection
   """
   use GenServer, restart: :permanent
+  require Logger
 
   def start_link(args) do
     GenServer.start_link(__MODULE__, args)
   end
 
   def init(args) do
-    GenServer.cast(self, {:listen})
+    GenServer.cast(self(), {:listen})
     {:ok, args |> Enum.into(%{})}
   end
 
@@ -24,11 +25,11 @@ defmodule Proxir.Server do
     # once we've handed over the connection to the handler process
     {:ok, socket} = :gen_tcp.listen(port,
           [:binary, active: false, reuseaddr: true, nodelay: true])
-    IO.puts("Listening on port #{port}")
+    Logger.debug("Listening on port #{port}")
     loop_acceptor(socket, opts)
   end
 
-  defp loop_acceptor(socket, opts = %{port: port}) do
+  defp loop_acceptor(socket, opts) do
     {:ok, client} = :gen_tcp.accept(socket)
     {:ok, pid} = Proxir.HandlerSupervisor.start_handler(client, opts)
     :ok = :gen_tcp.controlling_process(client, pid)

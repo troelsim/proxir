@@ -3,6 +3,7 @@ defmodule Proxir.Handler do
   A GenServer to handle each incoming connection.
   """
   use GenServer
+  require Logger
   @filter_module Proxir.Filter
 
   def start_link(client, opts) do
@@ -15,7 +16,7 @@ defmodule Proxir.Handler do
   end
 
   def connect(%{host: host, remote_port: remote_port}) do
-    IO.puts("Connecting to #{host}:#{remote_port}...")
+    Logger.debug("Connecting to #{host}:#{remote_port}...")
     :gen_tcp.connect(String.to_charlist(host), remote_port, [:binary, active: false, reuseaddr: true, nodelay: true])
   end
 
