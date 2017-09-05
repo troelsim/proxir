@@ -4,6 +4,10 @@ A simple TCP proxy written in elixir. It listens on a specified port, and when a
 
 Currently, it works best for filtering text-only protocols such as uncompressed HTTP. The goal is a more sophisticated pipeline similar to Plug.
 
+You can for example use it for debugging web and mobile applications, or security auditing.
+
+Suppose you want to pipe the traffic from a local application to `example.com` through Proxir: You can add `127.0.0.1 example.com` to `/etc/hosts` and have Proxir listen on localhost, port 80, forwarding the traffic to example.com, port 80.
+
 ## Installation
 
 Clone this git repo.
