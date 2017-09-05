@@ -14,7 +14,6 @@ defmodule Proxir do
   """
 
   def main(args) do
-    IO.puts("In main")
     parse_args(args)
   end
 
@@ -23,7 +22,11 @@ defmodule Proxir do
       is_binary(host) and
       is_integer(remote_port)
   do
-    #Proxir.ProxyServer.start(:server, [port: port])
+    Application.start(:proxir, [port, host, remote_port])
+    Proxir.Application.start(Proxir.Application, [port: port, host: host, remote_port: remote_port])
+    receive do
+      _ -> nil
+    end
   end
   def parse_args([port, host, remote_port]) do
     try do

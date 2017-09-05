@@ -24,6 +24,7 @@ defmodule Proxir.Server do
     # once we've handed over the connection to the handler process
     {:ok, socket} = :gen_tcp.listen(port,
           [:binary, active: false, reuseaddr: true, nodelay: true])
+    IO.puts("Listening on port #{port}")
     loop_acceptor(socket, opts)
   end
 

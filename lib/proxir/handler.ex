@@ -15,7 +15,7 @@ defmodule Proxir.Handler do
   end
 
   def connect(%{host: host, remote_port: remote_port}) do
-    IO.puts("Received an incoming connection, forwarding to #{host}:#{remote_port}...")
+    IO.puts("Connecting to #{host}:#{remote_port}...")
     :gen_tcp.connect(String.to_charlist(host), remote_port, [:binary, active: false, reuseaddr: true, nodelay: true])
   end
 
