@@ -14,4 +14,4 @@ $ ./proxir <local_port> <remote_host> <remote_port>
 ```
 
 ## License
-[Apache License 2.0](license.md)
+[Apache License 2.0](LICENSE)
