@@ -20,21 +20,19 @@ defmodule Proxir.Server do
   end
 
   def accept(opts = %{port: port}) do
-    IO.puts "Waiting for connections on port #{port}"
+    # Accept connections in passive mode, we switch to active
+    # once we've handed over the connection to the handler process
     {:ok, socket} = :gen_tcp.listen(port,
           [:binary, active: false, reuseaddr: true, nodelay: true])
     loop_acceptor(socket, opts)
   end
 
   defp loop_acceptor(socket, opts = %{port: port}) do
-    IO.puts "Listening on #{port}..."
     {:ok, client} = :gen_tcp.accept(socket)
-    IO.puts "Got new connection, starting handler"
-    {:ok, pid} = Proxir.HandlerSupervisor.start_handler([opts])
-    IO.puts "Passing ownership to #{inspect(pid)}"
+    {:ok, pid} = Proxir.HandlerSupervisor.start_handler(client, opts)
     :ok = :gen_tcp.controlling_process(client, pid)
-    GenServer.cast(pid, {:set_client, client})
-    IO.inspect(pid)
+    # Set the socket as active after we've handed over ownership
+    GenServer.cast(pid, {:set_active})
     loop_acceptor(socket, opts)
   end
 end

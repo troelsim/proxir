@@ -4,8 +4,8 @@ defmodule Proxir.HandlerSupervisor do
     Supervisor.start_link(__MODULE__, args, name: __MODULE__)
   end
 
-  def start_handler(opts) do
-    Supervisor.start_child(__MODULE__, [opts])
+  def start_handler(client, opts) do
+    Supervisor.start_child(__MODULE__, [client, opts])
   end
 
   def init(_) do
