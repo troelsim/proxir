@@ -5,46 +5,33 @@ defmodule Proxir.ProxyServer do
   for each new connection
   """
 
-  def start(_type, [port: port]) do
+  def start(_type, [port: port, host: host, remote_port: remote_port]) do
     import Supervisor.Spec, warn: false
 
     children = [
       supervisor(Task.Supervisor, [[name: Proxir.TaskSupervisor]]),
-      worker(Task, [Proxir.ProxyServer, :accept, [port]])
+      worker(Task, [Proxir.ProxyServer, :accept,
+        [%{port: port, host: host, remote_port: remote_port}]]
+      )
     ]
     opts = [strategy: :one_for_one, name: Proxir.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
-  def accept(port) do
+  def accept(opts = %{port: port}) do
     IO.puts "Waiting for connections on port #{port}"
     {:ok, socket} = :gen_tcp.listen(port,
-          [:binary, packet: :line, active: false, reuseaddr: true])
-    loop_acceptor(socket)
+          [:binary, active: false, reuseaddr: true, nodelay: true])
+    loop_acceptor(socket, opts)
   end
 
-  defp loop_acceptor(socket) do
+  defp loop_acceptor(socket, opts = %{port: port}) do
     IO.puts "Got new connection"
     {:ok, client} = :gen_tcp.accept(socket)
-    {:ok, pid} = Task.Supervisor.start_child(Proxir.TaskSupervisor, fn -> serve(client) end)
+    {:ok, pid} = Task.Supervisor.start_child(Proxir.TaskSupervisor, fn ->
+      Proxir.ProxyTask.serve(client, opts)
+    end)
     IO.inspect(pid)
-    loop_acceptor(socket)
-  end
-
-  defp serve(socket) do
-    message = with {:ok, data} <- read_line(socket), do: data
-    message |> write_line(socket)
-    serve(socket)
-  end
-
-  defp read_line(socket) do
-    :gen_tcp.recv(socket, 0)
-  end
-  
-  defp write_line({:error, _}, socket) do
-    exit(:shutdown)
-  end
-  defp write_line(line, socket) do
-    :gen_tcp.send(socket, line)
+    loop_acceptor(socket, opts)
   end
 end
