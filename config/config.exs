@@ -3,7 +3,8 @@
 use Mix.Config
 
 config :proxir,
-  filter_module: Proxir.Filter
+  filter_module: Proxir.Filter,
+  socket_module: Proxir.Socket.SOCKS
 
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this
