@@ -33,7 +33,15 @@ Start the application like this:
 Proxir.Application.start(:normal, [port: 8080, host: "localhost", remote_port: 9000])
 ```
 
-And Proxir will listen on port 8080 and forward the TCP connections to `localhost`, port 9000
+And Proxir will listen on port 8080 and forward the TCP connections to `localhost`, port 9000.
+
+You can optionally specify a SOCKS proxy in the configuration:
+```elixir
+config :proxir,
+  socket_module: Proxir.Socket.SOCKS,
+  socks_host: "127.0.0.1",
+  socks_port: 9050
+```
 
 ## License
 [Apache License 2.0](LICENSE)
